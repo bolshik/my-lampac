@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+
+namespace HdvbUA;
+
+public class EmbedModel
+{
+    public bool IsEmpty { get; set; }
+
+    public string content { get; set; }
+
+    public List<Voice> serial { get; set; }
+}
+
+public class Season
+{
+    public string title { get; set; }
+
+    public Series[] folder { get; set; }
+}
+
+public class Series
+{
+    public string title { get; set; }
+
+    public string file { get; set; }
+
+    public string subtitle { get; set; }
+}
+
+public class Voice
+{
+    public string title { get; set; }
+
+    public Season[] folder { get; set; }
+}
