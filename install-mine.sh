@@ -247,7 +247,14 @@ get_prerelease_zip_url() {
     log_err "No pre-release asset named $RELEASE_ZIP_NAME found for $GITHUB_REPO."
     exit 1
   fi
-  PUBLISH_URL="$url"
+  GITHUB_TOKEN="${LAMPAC_GITHUB_TOKEN:-}"
+if [[ -n "${GITHUB_TOKEN}" ]]; then
+  PUBLISH_URL=$(curl -sSf -H "Authorization: token ${GITHUB_TOKEN}" \
+    "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | \
+    python3 -c "import json,sys; d=json.load(sys.stdin); print([a['browser_download_url'] for a in d.get('assets',[]) if a['name']=='$RELEASE_ZIP_NAME'][0])")
+else
+  PUBLISH_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/${RELEASE_ZIP_NAME}"
+fi
 }
 
 parse_args() {
