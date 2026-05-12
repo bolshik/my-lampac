@@ -18,7 +18,7 @@ readonly LAMPAC_USER="${LAMPAC_USER:-lampac}"
 readonly SERVICE_NAME="${LAMPAC_SERVICE_NAME:-lampac}"
 readonly SYSTEMD_UNIT_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
 # Override with LAMPAC_GITHUB_REPO=owner/name if your releases live elsewhere
-readonly GITHUB_REPO="${LAMPAC_GITHUB_REPO:-lampac-nextgen/lampac}"
+readonly GITHUB_REPO="${LAMPAC_GITHUB_REPO:-bolshik/my-lampac}"
 readonly RELEASE_ZIP_NAME="lampac-nextgen.zip"
 readonly DOTNET_INSTALL_DIR="${LAMPAC_DOTNET_ROOT:-/usr/share/dotnet}"
 readonly DOTNET_CHANNEL="${LAMPAC_DOTNET_CHANNEL:-10.0}"
@@ -820,33 +820,6 @@ main() {
   install_systemd_unit
   set_install_ownership
   start_service
-
-  # === Настройка Focus-TV из коробки ===
-  log_info "Configuring Focus-TV defaults..."
-
-  # Создаём пароль администратора
-  echo -n "Vfhifk1981@" | tee "${INSTALL_ROOT}/passwd" > /dev/null
-  chown "${LAMPAC_USER}:${LAMPAC_USER}" "${INSTALL_ROOT}/passwd"
-  log_ok "Admin password set"
-
-  # Копируем готовый init.conf (если его нет)
-  if [[ ! -f "${INSTALL_ROOT}/init.conf" ]]; then
-    cp "${INSTALL_ROOT}/example.init.conf" "${INSTALL_ROOT}/init.conf"
-  fi
-  chown "${LAMPAC_USER}:${LAMPAC_USER}" "${INSTALL_ROOT}/init.conf"
-  log_ok "init.conf ready"
-
-  # Включаем AdminPanel
-  mkdir -p "${INSTALL_ROOT}/mods"
-  cp -r "${INSTALL_ROOT}/module/AdminPanel" "${INSTALL_ROOT}/mods/AdminPanel"
-  sed -i 's/"enable": false/"enable": true/' "${INSTALL_ROOT}/mods/AdminPanel/manifest.json"
-  chown -R "${LAMPAC_USER}:${LAMPAC_USER}" "${INSTALL_ROOT}/mods"
-  log_ok "AdminPanel enabled"
-
-  # Перезапускаем для применения
-  systemctl restart lampac
-  log_ok "Service restarted with Focus-TV config"
-
   print_post_install
 }
 
