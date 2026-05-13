@@ -199,6 +199,10 @@ INITEOF
   cp -r "${INSTALL_ROOT}/module/AdminPanel" "${INSTALL_ROOT}/mods/AdminPanel"
   sed -i 's/"enable": false/"enable": true/' "${INSTALL_ROOT}/mods/AdminPanel/manifest.json"
   chown -R "${LAMPAC_USER}:${LAMPAC_USER}" "${INSTALL_ROOT}/mods"
+    # Убираем суффикс -CUB из заголовков
+  if [[ -f "${INSTALL_ROOT}/wwwroot/lampa-main/app.min.js" ]]; then
+    sed -i "s/+ ' - ' + Storage.field('source').toUpperCase()//g" "${INSTALL_ROOT}/wwwroot/lampa-main/app.min.js"
+  fi
 }
 
 start_service() { systemctl start "$SERVICE_NAME"; }
